@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফটোলিপি - আপনার স্বপ্নের ডিজাইন!</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Custom CSS file -->
+    <link rel="stylesheet" href="style.css">
+    <!-- jsPDF Library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <!-- Main Header Section -->
+    <header class="main-header">
+        <div class="container">
+            <div class="logo-placeholder">
+                <!-- Placeholder for Fotolipi Logo - will be styled with CSS/font -->
+                <h1 class="company-name">ফটোলিপি</h1>
+            </div>
+            <p class="slogan">আপনার সৃষ্টিশীলতার প্রতিচ্ছবি, আমাদের হাতে!</p>
+            <nav>
+                <a href="#featured-designs"><i class="fas fa-star"></i> ফিচারড ডিজাইন</a>
+                <a href="#services"><i class="fas fa-palette"></i> আমাদের সেবা</a>
+                <a href="#how-it-works"><i class="fas fa-lightbulb"></i> কিভাবে কাজ করে</a>
+                <a href="#about-us"><i class="fas fa-users"></i> আমাদের সম্পর্কে</a>
+                <a href="#contact"><i class="fas fa-phone-alt"></i> যোগাযোগ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h2>আপনার ভাবনাকে ছবিতে আনুন!</h2>
+                <p>প্যানা, ব্যানার, পোস্টার, শুভেচ্ছা কার্ড থেকে শুরু করে বিবাহের কার্ড - সব ধরনের ডিজাইনের জন্য ফটোলিপি আপনার পাশে।</p>
+                <div class="hero-buttons">
+                    <a href="#services" class="btn primary-btn"><i class="fas fa-scroll"></i> ডিজাইন দেখুন</a>
+                    <a href="#contact" class="btn secondary-btn"><i class="fas fa-comment-dots"></i> যোগাযোগ করুন</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Designs Section -->
+    <section id="featured-designs" class="designs-section">
+        <div class="container">
+            <h2><i class="fas fa-star"></i> ফিচারড ডিজাইন</h2>
+            <p class="section-description">এই মুহূর্তে জনপ্রিয় এবং বিশেষভাবে নির্বাচিত ডিজাইনগুলো দেখুন।</p>
+            <div class="design-grid" id="featured-design-grid">
+                <!-- Featured designs will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services-section">
+        <div class="container">
+            <h2><i class="fas fa-palette"></i> আমাদের ডিজাইন সেবা সমূহ</h2>
+            <p class="section-description">আপনার প্রয়োজন অনুযায়ী বিভিন্ন ধরণের ডিজাইন সেবা আমরা প্রদান করি।</p>
+            <div class="design-category" id="all-designs-container">
+                <!-- All other designs categorized will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works-section">
+        <div class="container">
+            <h2><i class="fas fa-lightbulb"></i> কিভাবে আমরা কাজ করি?</h2>
+            <div class="process-steps">
+                <div class="step-item">
+                    <i class="fas fa-mouse-pointer process-icon"></i>
+                    <h4>১. ডিজাইন নির্বাচন</h4>
+                    <p>আপনার পছন্দের ডিজাইন ক্যাটাগরি ও ধরন নির্বাচন করুন।</p>
+                </div>
+                <div class="step-item">
+                    <i class="fas fa-upload process-icon"></i>
+                    <h4>২. ফাইল ও তথ্য আপলোড</h4>
+                    <p>আপনার ডিজাইনের জন্য প্রয়োজনীয় ছবি, লেখা এবং অন্যান্য তথ্য আপলোড করুন।</p>
+                -> Add a file input here later in the popup
+                </div>
+                <div class="step-item">
+                    <i class="fas fa-edit process-icon"></i>
+                    <h4>৩. ডিজাইন প্রক্রিয়া</h4>
+                    <p>আমাদের অভিজ্ঞ শিক্ষার্থীরা আপনার তথ্য অনুযায়ী ডিজাইন তৈরি করবে।</p>
+                </div>
+                <div class="step-item">
+                    <i class="fas fa-check-circle process-icon"></i>
+                    <h4>৪. অনুমোদন ও ডেলিভারি</h4>
+                    <p>ডিজাইন অনুমোদনের পর, আমরা ফাইলটি আপনার কাছে পৌঁছে দেবো।</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about-us" class="about-us-section">
+        <div class="container">
+            <h2><i class="fas fa-users"></i> আমাদের সম্পর্কে</h2>
+            <p class="section-description">ফটোলিপি একটি সামাজিক সংগঠন, যা বেকার শিক্ষার্থীদের জন্য আয়ের সুযোগ তৈরি করে। অভিজ্ঞ ছাত্র-ছাত্রীদের দিয়ে কাজ করিয়ে আমরা তাদের ভাতা প্রদান করি, যা তাদের পড়াশোনার খরচ মেটাতে সাহায্য করে।</p>
+            <p class="section-description">আমরা বিশ্বাস করি, প্রতিভার সঠিক মূল্যায়ন এবং সুযোগের মাধ্যমে প্রতিটি শিক্ষার্থী তাদের স্বপ্ন পূরণ করতে পারে। ফটোলিপি শুধু একটি ফ্রিল্যান্সিং সাইট নয়, এটি একটি প্লাটফর্ম যেখানে সৃষ্টিশীলতা এবং সামাজিক দায়িত্বশীলতা হাত ধরাধরি করে চলে।</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2><i class="fas fa-phone-alt"></i> যোগাযোগ</h2>
+            <p>আমাদের সাথে যোগাযোগ করতে নিচে দেওয়া তথ্য ব্যবহার করুন।</p>
+            <p>মোবাইল: <a href="tel:+8801951912031">০১৯৫১৯১২০৩১</a></p>
+            <p>ইমেইল: <a href="mailto:info@fotolipi.com">info@fotolipi.com</a></p>
+            <p>আমাদের ঠিকানা: <br>ফটোলিপি কার্যালয়, [আপনার ঠিকানা এখানে যোগ করুন]</p>
+            <div class="social-links">
+                <a href="https://wa.me/+8801951912031" target="_blank" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                <!-- Add other social media links as needed -->
+                <!-- <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a> -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> ফটোলিপি। সর্বস্বত্ব সংরক্ষিত।</p>
+        </div>
+    </footer>
+
+    <!-- Design Detail & Order Popup -->
+    <div id="design-detail-popup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <button class="close-popup-btn" id="close-design-detail-popup">&times;</button>
+            <div class="popup-design-details">
+                <img id="popup-design-image" src="" alt="Design Image">
+                <div class="text-details">
+                    <h3 id="popup-design-name"></h3>
+                    <p class="popup-design-description"></p>
+                    <p class="popup-price-display">মূল্য: <span id="popup-design-price"></span> টাকা</p>
+                </div>
+            </div>
+            <button class="btn primary-btn" id="select-design-btn">নির্বাচন করুন</button>
+        </div>
+    </div>
+
+    <!-- Order Details & File Upload Popup -->
+    <div id="order-details-popup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <button class="close-popup-btn" id="close-order-details-popup">&times;</button>
+            <h3 class="popup-heading"><i class="fas fa-clipboard-list"></i> অর্ডারের বিবরণ</h3>
+            <form id="file-upload-form">
+                <div class="form-group">
+                    <label for="customer-design-file">প্রয়োজনীয় ফাইল আপলোড করুন:</label>
+                    <input type="file" id="customer-design-file" name="designFile" accept="image/*, .pdf, .doc, .docx" multiple>
+                    <p class="text-sm text-gray-500 mt-1">ছবি, PDF, Word ফাইল আপলোড করতে পারবেন। একাধিক ফাইল আপলোড করা যাবে।</p>
+                </div>
+                <div class="form-group">
+                    <label for="customer-name">আপনার নাম:</label>
+                    <input type="text" id="customer-name" name="customerName" placeholder="আপনার পুরো নাম লিখুন" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer-mobile">মোবাইল নম্বর:</label>
+                    <input type="tel" id="customer-mobile" name="customerMobile" placeholder="আপনার মোবাইল নম্বর লিখুন (যেমন: ০১৭XXXXXXXX)" required>
+                </div>
+                 <div class="form-group">
+                    <label for="customer-title">পদবী (ঐচ্ছিক):</label>
+                    <input type="text" id="customer-title" name="customerTitle" placeholder="আপনার পদবী লিখুন (যেমন: ম্যানেজার, শিক্ষক)">
+                </div>
+                 <div class="form-group">
+                    <label for="customer-organization">সংগঠন (ঐচ্ছিক):</label>
+                    <input type="text" id="customer-organization" name="customerOrganization" placeholder="আপনার প্রতিষ্ঠানের নাম লিখুন">
+                </div>
+                <div class="form-group">
+                    <label for="customer-brief">সংক্ষিপ্ত বিবরণ:</label>
+                    <textarea id="customer-brief" name="customerBrief" rows="4" placeholder="আপনার ডিজাইন সম্পর্কে সংক্ষিপ্ত বিবরণ লিখুন (যেমন: থিম, রং, টেক্সট)" required></textarea>
+                </div>
+                <button type="submit" class="btn primary-btn" id="add-to-cart-btn"><i class="fas fa-cart-plus"></i> কার্টে যুক্ত করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Summary & Payment Popup -->
+    <div id="order-summary-modal" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <button class="close-popup-btn" id="close-order-summary-btn">&times;</button>
+            <h3 class="popup-heading"><i class="fas fa-file-invoice"></i> আপনার অর্ডার</h3>
+            <div class="invoice-header">
+                <p>তারিখ: <span id="order-date"></span></p>
+                <p>অর্ডার কোড: <span id="order-unique-code"></span></p>
+            </div>
+            <div id="cart-summary-items">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+            <div class="cart-total-section">
+                <p class="total-label">মোট বিল:</p>
+                <p class="total-amount"><span id="final-total-bill">০</span> টাকা</p>
+            </div>
+
+            <h4 class="payment-heading">বিল পরিশোধের তথ্য (বিকাশ)</h4>
+            <p class="payment-instructions">আপনার মোট বিল <span id="bKash-total">০</span> টাকা এই বিকাশ নম্বরে <span class="bKash-number">+8801951912031</span> সেন্ট মানি করুন।</p>
+            <form id="payment-form">
+                <div class="form-group">
+                    <label for="bKash-txn-id">বিকাশ Transaction ID:</label>
+                    <input type="text" id="bKash-txn-id" placeholder="আপনার বিকাশ Transaction ID লিখুন" required>
+                </div>
+                <div class="form-group">
+                    <label for="bKash-sender-num">আপনার বিকাশ নম্বর:</label>
+                    <input type="tel" id="bKash-sender-num" placeholder="যে বিকাশ নম্বর থেকে টাকা পাঠিয়েছেন" required>
+                </div>
+                <button type="submit" class="btn primary-btn"><i class="fas fa-paper-plane"></i> অর্ডার প্লেস করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Success Popup -->
+    <div id="order-success-popup" class="popup-overlay" style="display: none;">
+        <div class="popup-content success-content">
+            <button class="close-popup-btn" id="close-success-popup-btn">&times;</button>
+            <h2 class="success-heading"><i class="fas fa-check-circle"></i> অর্ডার সফল!</h2>
+            <p class="success-message">আপনার অর্ডার সফলভাবে জমা হয়েছে।</p>
+            <p class="success-message">খুব শীঘ্রই আমাদের প্রতিনিধি আপনার সাথে যোগাযোগ করবে এবং আপনার আপলোড করা ফাইলগুলো WhatsApp-এর মাধ্যমে পাঠাতে অনুরোধ করবে।</p>
+            <button class="btn secondary-btn" id="download-pdf-btn"><i class="fas fa-file-pdf"></i> চালান ডাউনলোড করুন</button>
+            <a href="https://wa.me/8801951912031?text=প্রিয় ফটোলিপি টিম, আমার অর্ডার কোড: {{ORDER_CODE}}। আমি আমার ডিজাইনের ফাইলগুলো শেয়ার করতে চাই।" target="_blank" class="btn whatsapp-btn mt-3" id="whatsapp-file-share-btn"><i class="fab fa-whatsapp"></i> WhatsApp এ ফাইল পাঠান</a>
+            <p class="thank-you-message mt-4">ফটোলিপির সাথে থাকার জন্য ধন্যবাদ!</p>
+            <button class="btn primary-btn mt-3" id="close-success-popup-btn-bottom">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <!-- Custom Message Box Overlay (Hidden by default) -->
+    <div id="message-box-overlay" class="popup-overlay" style="display: none;">
+        <div id="message-box-content" class="popup-content">
+            <h4 id="message-box-title"></h4>
+            <p id="message-box-text"></p>
+            <button id="message-box-ok-btn">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <!-- Floating Cart Button -->
+    <div id="floating-cart-button" class="floating-button" style="display: none;">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="cart-item-count" class="cart-count">0</span>
+    </div>
+
+    <!-- Custom JavaScript file -->
+    <script src="script.js"></script>
+    <script>
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
