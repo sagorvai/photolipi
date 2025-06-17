@@ -66,8 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentOrderDate = ''; // Will store English date string for PDF
     let lastSubmittedOrderData = null; // To hold data for PDF download
 
-    const GOOGLE_APPS_SCRIPT_PRODUCTS_URL = "https://script.google.com/macros/s/AKfycbzk7ds_HA-wHiGumbysQ7h-4uXcj3QsXrgRRAIwkjhOqwVyWZCFwmdXi6umapfA2JS6/exec"; // Replace with your Product Sheet Apps Script URL
-    const GOOGLE_APPS_SCRIPT_ORDERS_URL = "https://script.google.com/macros/s/AKfycbzk7ds_HA-wHiGumbysQ7h-4uXcj3QsXrgRRAIwkjhOqwVyWZCFwmdXi6umapfA2JS6/exec";   // Replace with your Order Sheet Apps Script URL
+    // --- GOOGLE APPS SCRIPT URLs (UPDATED) ---
+    const GOOGLE_APPS_SCRIPT_PRODUCTS_URL = "https://script.google.com/macros/s/AKfycbyecR4VKIJ2K5n_3gAjnUFZm4seZWUtL8lMQGuY0o1LIIDwCvHpLCyFhkacqz3rc2SG1w/exec"; 
+    const GOOGLE_APPS_SCRIPT_ORDERS_URL = "https://script.google.com/macros/s/AKfycbyBGei3PDbYmWf1aL4FTWgX8ncQd9fZ3aORFKwPH2dnEZDgzEAV67jK2wvv-_fwlXv/exec";   
+    // --- END OF URLS ---
 
     // --- Helper Functions ---
 
@@ -170,6 +172,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const categoryGrids = new Map(); // To store references to category grid divs
 
+        // Sort designs to prioritize featured ones
+        designsToRender.sort((a, b) => {
+            const isAFeatured = (a.Featured && (a.Featured.toString().toLowerCase().trim() === 'yes' || a.Featured.toString().toLowerCase().trim() === 'true'));
+            const isBFeatured = (b.Featured && (b.Featured.toString().toLowerCase().trim() === 'yes' || b.Featured.toString().toLowerCase().trim() === 'true'));
+
+            if (isAFeatured && !isBFeatured) return -1; // A comes before B if A is featured and B is not
+            if (!isAFeatured && isBFeatured) return 1;  // B comes before A if B is featured and A is not
+            return 0; // Maintain original order for non-featured or both featured
+        });
+
         designsToRender.forEach(design => {
             if (!design.Name || design.Name.toString().trim() === '' ||
                 !design.Price || design.Price.toString().trim() === '' ||
@@ -210,9 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 designDetailPopup.style.display = 'flex';
             });
 
-            // Handle "Featured" designs
-            const isFeatured = (design.Featured && design.Featured.toString().toLowerCase().trim() === 'yes' || 
-                                 design.Featured && design.Featured.toString().toLowerCase().trim() === 'true');
+            // Handle "Featured" designs - now sorted, just append to featured grid
+            const isFeatured = (design.Featured && (design.Featured.toString().toLowerCase().trim() === 'yes' || design.Featured.toString().toLowerCase().trim() === 'true'));
             
             if (isFeatured) {
                 featuredDesignGrid.appendChild(designItem.cloneNode(true)); // Clone to avoid moving element
@@ -338,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
 
         if (cart.length === 0) {
-            showMessage('ত্রুটি', 'অর্ডার করার জন্য কোনো ডিজাইন নির্বাচন করা হয়নি।');
+            showMessage('ত্রুটি', 'কোনো ডিজাইন নির্বাচন করা হয়নি।');
             return;
         }
 
@@ -401,6 +412,11 @@ document.addEventListener('DOMContentLoaded', () => {
             cart = [];
             fileUploadForm.reset();
             paymentForm.reset();
+            customerNameInput.value = ''; // Also clear customer info
+            customerMobileInput.value = '';
+            customerTitleInput.value = '';
+            customerOrganizationInput.value = '';
+            customerBriefInput.value = '';
             updateCartDisplay();
 
         } catch (error) {
@@ -424,8 +440,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Columns for item table
             const colWidthsArray = [
-                tableWidth * 0.50, // Item Name (50%)
-                tableWidth * 0.25, // Description (25%)
+                tableWidth * 0.35, // Item Name (35%)
+                tableWidth * 0.40, // Description (40%)
                 tableWidth * 0.25  // Price (25%)
             ];
 
@@ -492,21 +508,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const textLineHeight = pdf.getFontSize() * lineHeightFactor;
                 let rowHeight = textLineHeight; // Default for single line
 
-                // Check for potential line breaks in item brief, but keep item name single line
-                const briefLines = pdf.splitTextToSize(itemBrief, colWidthsArray[1] - 10);
-                const actualBriefHeight = briefLines.length * textLineHeight;
-                if (actualBriefHeight > rowHeight) {
-                    rowHeight = actualBriefHeight;
-                }
+                // Item Name (Single line, truncated if too long)
+                // We keep it on one line as per user request, with ellipsis in UI. PDF will simply truncate.
+                const itemNameLines = pdf.splitTextToSize(itemName, colWidthsArray[0] - 10);
+                const itemBriefLines = pdf.splitTextToSize(itemBrief, colWidthsArray[1] - 10);
+                
+                // Calculate max height needed for current row based on item name or brief
+                const maxTextHeight = Math.max(itemNameLines.length * textLineHeight, itemBriefLines.length * textLineHeight);
+                rowHeight = maxTextHeight > rowHeight ? maxTextHeight : rowHeight;
                 if (rowHeight < 20) rowHeight = 20; // Minimum row height
 
                 pdf.rect(leftMargin, y, tableWidth, rowHeight, 'S');
 
-                // Item Name (Single line, will be truncated with ellipsis in UI if too long in PDF)
-                pdf.text(itemName, col1X, y + (textLineHeight * 0.75), { maxWidth: colWidthsArray[0] - 10 });
+                // Print Item Name
+                pdf.text(itemNameLines, col1X, y + (textLineHeight * 0.75));
 
-                // Item Brief (Can be multi-line if needed)
-                pdf.text(briefLines, col2X, y + (textLineHeight * 0.75));
+                // Print Item Brief
+                pdf.text(itemBriefLines, col2X, y + (textLineHeight * 0.75));
 
                 // Price
                 pdf.text(`${itemPrice} BDT`, col3X, y + (textLineHeight * 0.75), { align: 'right' });
@@ -583,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Floating Button Drag Functionality ---
+    // --- Floating Button Drag Functionality (unchanged) ---
     let isDragging = false;
     let offsetX, offsetY;
 
