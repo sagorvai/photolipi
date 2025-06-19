@@ -17,8 +17,8 @@ function showMessage(title, message) {
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Element References ---
-    const featuredDesignGrid = document.getElementById('featured-design-grid');
-    const allDesignsContainer = document.getElementById('all-designs-container'); // This will hold category-wise design grids
+    const featuredCategoriesContainer = document.getElementById('featured-categories-container');
+    const regularCategoriesContainer = document.getElementById('regular-categories-container');
 
     const designDetailPopup = document.getElementById('design-detail-popup');
     const closeDesignDetailPopupBtn = document.getElementById('close-design-detail-popup');
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentOrderDate = ''; // Will store English date string for PDF
     let lastSubmittedOrderData = null; // To hold data for PDF download
 
-    // --- GOOGLE APPS SCRIPT URLs (UPDATED) ---
+    // --- GOOGLE APPS SCRIPT URLs ---
     const GOOGLE_APPS_SCRIPT_PRODUCTS_URL = "https://script.google.com/macros/s/AKfycbyecR4VKIJ2K5n_3gAjnUFZm4seZWUtL8lMQGuY0o1LIIDwCvHpLCyFhkacqz3rc2SG1w/exec"; 
     const GOOGLE_APPS_SCRIPT_ORDERS_URL = "https://script.google.com/macros/s/AKfycbyBGei3PDbYmWf1aL4FTWgX8ncQd9fZ3aORFKwPH2dnEZDgzEAV67jK2wvv-_fwlXv/exec";   
     // --- END OF URLS ---
@@ -164,24 +164,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Render designs into the respective grids
+    // Render designs into the respective containers
     function renderDesigns(designsToRender) {
         // Clear existing designs
-        featuredDesignGrid.innerHTML = '';
-        allDesignsContainer.innerHTML = ''; // Clear all categories
+        featuredCategoriesContainer.innerHTML = '';
+        regularCategoriesContainer.innerHTML = '';
 
-        const categoryGrids = new Map(); // To store references to category grid divs
+        const categoriesMap = new Map(); // Stores { categoryName: { isFeatured: boolean, element: HTMLDivElement, gridElement: HTMLDivElement } }
 
-        // Sort designs to prioritize featured ones
-        designsToRender.sort((a, b) => {
-            const isAFeatured = (a.Featured && (a.Featured.toString().toLowerCase().trim() === 'yes' || a.Featured.toString().toLowerCase().trim() === 'true'));
-            const isBFeatured = (b.Featured && (b.Featured.toString().toLowerCase().trim() === 'yes' || b.Featured.toString().toLowerCase().trim() === 'true'));
-
-            if (isAFeatured && !isBFeatured) return -1; // A comes before B if A is featured and B is not
-            if (!isAFeatured && isBFeatured) return 1;  // B comes before A if B is featured and A is not
-            return 0; // Maintain original order for non-featured or both featured
-        });
-
+        // First pass: Group designs by category and identify featured categories
         designsToRender.forEach(design => {
             if (!design.Name || design.Name.toString().trim() === '' ||
                 !design.Price || design.Price.toString().trim() === '' ||
@@ -190,68 +181,93 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const designItem = document.createElement('div');
-            designItem.classList.add('design-item');
-            designItem.dataset.name = design.Name;
-            designItem.dataset.price = design.Price;
-            designItem.dataset.description = design.Description || 'কোনো বিবরণ নেই।';
-            designItem.dataset.imageUrl = design['Image URL'] || 'https://placehold.co/300x200/cccccc/333333?text=ছবি+নেই';
-            designItem.dataset.category = design.Category;
+            const categoryName = design.Category.trim();
+            const isFeaturedDesign = (design.Featured && (design.Featured.toString().toLowerCase().trim() === 'yes' || design.Featured.toString().toLowerCase().trim() === 'true'));
 
-            designItem.innerHTML = `
-                <img src="${designItem.dataset.imageUrl}" alt="${design.Name} ডিজাইন">
-                <div class="design-item-content">
-                    <h4>${design.Name}</h4>
-                    <p class="price">${design.Price} টাকা</p>
-                </div>
-            `;
-
-            // Open popup on click
-            designItem.addEventListener('click', () => {
-                popupDesignImage.src = designItem.dataset.imageUrl;
-                popupDesignName.textContent = designItem.dataset.name;
-                popupDesignDescription.textContent = designItem.dataset.description;
-                popupDesignPrice.textContent = designItem.dataset.price;
-                selectedDesign = {
-                    name: designItem.dataset.name,
-                    price: parseFloat(designItem.dataset.price),
-                    description: designItem.dataset.description,
-                    imageUrl: designItem.dataset.imageUrl,
-                    category: designItem.dataset.category
-                };
-                designDetailPopup.style.display = 'flex';
-            });
-
-            // Handle "Featured" designs - now sorted, just append to featured grid
-            const isFeatured = (design.Featured && (design.Featured.toString().toLowerCase().trim() === 'yes' || design.Featured.toString().toLowerCase().trim() === 'true'));
-            
-            if (isFeatured) {
-                featuredDesignGrid.appendChild(designItem.cloneNode(true)); // Clone to avoid moving element
-            }
-
-            // Handle categorized designs for "All Designs" section
-            const categoryName = design.Category;
-            let currentCategoryGrid = categoryGrids.get(categoryName);
-
-            if (!currentCategoryGrid) {
+            if (!categoriesMap.has(categoryName)) {
+                // Create category group container if it doesn't exist
                 const categoryDiv = document.createElement('div');
-                categoryDiv.classList.add('design-category-group'); // A div to group heading and grid
+                categoryDiv.classList.add('design-category-group');
                 
                 const categoryHeading = document.createElement('h3');
                 categoryHeading.textContent = categoryName;
-                categoryHeading.classList.add('design-category-heading'); // For specific styling
+                categoryHeading.classList.add('design-category-heading');
 
                 const designGridDiv = document.createElement('div');
-                designGridDiv.classList.add('design-grid'); // Re-use design-grid class for styling
-
+                designGridDiv.classList.add('design-grid');
+                
                 categoryDiv.appendChild(categoryHeading);
                 categoryDiv.appendChild(designGridDiv);
-                allDesignsContainer.appendChild(categoryDiv);
 
-                currentCategoryGrid = designGridDiv;
-                categoryGrids.set(categoryName, currentCategoryGrid);
+                categoriesMap.set(categoryName, {
+                    isFeatured: false, // Will be set to true if any design in it is featured
+                    element: categoryDiv,
+                    gridElement: designGridDiv,
+                    designs: [] // Store design data temporarily for sorting within category
+                });
             }
-            currentCategoryGrid.appendChild(designItem); // Original element goes into its category
+
+            const categoryEntry = categoriesMap.get(categoryName);
+            if (isFeaturedDesign) {
+                categoryEntry.isFeatured = true; // Mark category as featured if any design in it is featured
+            }
+            categoryEntry.designs.push(design); // Store design data to sort later
+        });
+
+        // Convert map to array and sort categories (featured first)
+        const sortedCategories = Array.from(categoriesMap.values()).sort((a, b) => {
+            if (a.isFeatured && !b.isFeatured) return -1;
+            if (!a.isFeatured && b.isFeatured) return 1;
+            return 0; // Maintain original order for non-featured or both featured
+        });
+
+        // Second pass: Populate the grids and append category groups to respective containers
+        sortedCategories.forEach(categoryEntry => {
+            // Sort designs within each category (e.g., by name or price, or keep original order)
+            // For now, no specific sort within category, just iterate stored designs
+            categoryEntry.designs.forEach(design => {
+                const designItem = document.createElement('div');
+                designItem.classList.add('design-item');
+                designItem.dataset.name = design.Name;
+                designItem.dataset.price = design.Price;
+                designItem.dataset.description = design.Description || 'কোনো বিবরণ নেই।';
+                designItem.dataset.imageUrl = design['Image URL'] || 'https://placehold.co/300x200/cccccc/333333?text=ছবি+নেই';
+                designItem.dataset.category = design.Category;
+
+                designItem.innerHTML = `
+                    <img src="${designItem.dataset.imageUrl}" alt="${design.Name} ডিজাইন">
+                    <div class="design-item-content">
+                        <h4>${design.Name}</h4>
+                        <p class="price">${design.Price} টাকা</p>
+                    </div>
+                `;
+
+                // Open popup on click
+                designItem.addEventListener('click', () => {
+                    popupDesignImage.src = designItem.dataset.imageUrl;
+                    popupDesignName.textContent = designItem.dataset.name;
+                    popupDesignDescription.textContent = designItem.dataset.description;
+                    popupDesignPrice.textContent = designItem.dataset.price;
+                    selectedDesign = {
+                        name: designItem.dataset.name,
+                        price: parseFloat(designItem.dataset.price),
+                        description: designItem.dataset.description,
+                        imageUrl: designItem.dataset.imageUrl,
+                        category: designItem.dataset.category
+                    };
+                    designDetailPopup.style.display = 'flex';
+                });
+
+                // Append design item to its category's grid element
+                categoryEntry.gridElement.appendChild(designItem);
+            });
+
+            // Append the full category group to the correct main container
+            if (categoryEntry.isFeatured) {
+                featuredCategoriesContainer.appendChild(categoryEntry.element);
+            } else {
+                regularCategoriesContainer.appendChild(categoryEntry.element);
+            }
         });
     }
 
