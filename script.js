@@ -31,12 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderDetailsPopup = document.getElementById('order-details-popup');
     const closeOrderDetailsPopupBtn = document.getElementById('close-order-details-popup');
     const fileUploadForm = document.getElementById('file-upload-form');
-    const customerDesignFile = document.getElementById('customer-design-file'); // File input
-    const customerNameInput = document.getElementById('customer-name');
-    const customerMobileInput = document.getElementById('customer-mobile');
-    const customerTitleInput = document.getElementById('customer-title');
-    const customerOrganizationInput = document.getElementById('customer-organization');
+    // Updated input fields for order details popup
+    const customerCombinedInfoInput = document.getElementById('customer-combined-info'); // New combined info field
+    const customerMobileInput = document.getElementById('customer-mobile'); // Mobile number moved here
     const customerBriefInput = document.getElementById('customer-brief');
+    const customerDesignFile = document.getElementById('customer-design-file'); // File input
     const addToCartBtn = document.getElementById('add-to-cart-btn');
 
     const floatingCartButton = document.getElementById('floating-cart-button');
@@ -51,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bKashTotalSpan = document.getElementById('bKash-total');
     const paymentForm = document.getElementById('payment-form');
     const bKashTxnIdInput = document.getElementById('bKash-txn-id');
-    const bKashSenderNumInput = document.getElementById('bKash-sender-num');
+    const bKashSenderNumInput = document.getElementById('bKash-sender-num'); // Sender number for payment, not contact
 
     const orderSuccessPopup = document.getElementById('order-success-popup');
     const closeSuccessPopupBtn = document.getElementById('close-success-popup-btn');
@@ -166,11 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render designs into the respective containers
     function renderDesigns(designsToRender) {
-        // Clear existing designs
+        // Clear existing containers
         featuredCategoriesContainer.innerHTML = '';
         regularCategoriesContainer.innerHTML = '';
 
-        const categoriesMap = new Map(); // Stores { categoryName: { isFeatured: boolean, element: HTMLDivElement, gridElement: HTMLDivElement } }
+        const categoriesMap = new Map(); // Stores { categoryName: { isFeatured: boolean, element: HTMLDivElement, gridElement: HTMLDivElement, designs: [] } }
 
         // First pass: Group designs by category and identify featured categories
         designsToRender.forEach(design => {
@@ -286,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
             orderDetailsPopup.style.display = 'flex';
             // Clear previous form data
             fileUploadForm.reset();
-            // Optional: Prefill customer details if needed from local storage
+            // No customer info prefill from local storage as per new flow
         }
     });
 
@@ -305,10 +304,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const customerName = customerNameInput.value.trim();
+        // Get customer info from the new fields in order details popup
+        const customerCombinedInfo = customerCombinedInfoInput.value.trim();
         const customerMobile = convertBengaliNumbersToEnglish(customerMobileInput.value.trim()); // Convert mobile to English
-        const customerTitle = customerTitleInput.value.trim();
-        const customerOrganization = customerOrganizationInput.value.trim();
         const customerBrief = customerBriefInput.value.trim();
         
         // Get file names for WhatsApp message, but don't upload the files
@@ -323,10 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add selected design and customer info to cart
         cart.push({
             ...selectedDesign,
-            customerName,
-            customerMobile,
-            customerTitle,
-            customerOrganization,
+            customerCombinedInfo, // Store combined info
+            customerMobile, // Store mobile from here
             customerBrief,
             uploadedFileNames: fileNames.join(', ') // Store file names as a string
         });
@@ -376,15 +372,20 @@ document.addEventListener('DOMContentLoaded', () => {
             showMessage('তথ্য পূরণ করুন', 'দয়া করে বিকাশ Transaction ID এবং আপনার বিকাশ নম্বর পূরণ করুন।');
             return;
         }
+        
+        // Ensure customer mobile is available from the first item in cart
+        const primaryCustomerMobile = cart[0].customerMobile; 
+        if (!primaryCustomerMobile) {
+            showMessage('ত্রুটি', 'গ্রাহকের মোবাইল নম্বর পাওয়া যায়নি। অনুগ্রহ করে অর্ডারের বিবরণীতে মোবাইল নম্বর দিন।');
+            return;
+        }
 
         // Prepare data for Google Sheet
         const orderDataForSheet = {
             orderCode: currentOrderCode,
             orderDate: currentOrderDate,
-            customerName: cart[0].customerName, // Assuming one customer for the entire cart
-            customerMobile: cart[0].customerMobile,
-            customerTitle: cart[0].customerTitle,
-            customerOrganization: cart[0].customerOrganization,
+            customerCombinedInfo: cart[0].customerCombinedInfo, // Combined info from the first item
+            customerMobile: primaryCustomerMobile, // Primary mobile from the first item
             paymentMethod: 'bKash',
             bKashTxnId: bKashTxnId,
             bKashSenderNum: bKashSenderNum,
@@ -420,19 +421,17 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('message-box-overlay').style.display = 'none'; // Hide loading message
             orderSuccessPopup.style.display = 'flex'; // Show success popup
 
-            // Update WhatsApp share button with dynamic order code
-            const whatsappMessage = `প্রিয় ফটোলিপি টিম, আমার অর্ডার কোড: ${currentOrderCode}%0Aআমার নাম: ${cart[0].customerName}%0Aআমার মোবাইল: ${cart[0].customerMobile}%0A%0Aআমি আমার ডিজাইনের ফাইলগুলো শেয়ার করতে চাই।`;
-            whatsappFileShareBtn.href = `https://wa.me/8801951912031?text=${encodeURIComponent(whatsappMessage)}`;
+            // Update WhatsApp share button with dynamic order code and mobile number
+            const whatsappMessage = `প্রিয় ফটোলিপি টিম, আমার অর্ডার কোড: ${currentOrderCode}%0Aআমার মোবাইল: ${primaryCustomerMobile}%0A%0Aআমি আমার ডিজাইনের ফাইলগুলো শেয়ার করতে চাই।`;
+            whatsappFileShareBtn.href = `https://wa.me/8801753903854?text=${encodeURIComponent(whatsappMessage)}`; // Corrected Bikas Number for WhatsApp
 
             // Clear cart and form after successful order
             cart = [];
             fileUploadForm.reset();
             paymentForm.reset();
-            customerNameInput.value = ''; // Also clear customer info
-            customerMobileInput.value = '';
-            customerTitleInput.value = '';
-            customerOrganizationInput.value = '';
-            customerBriefInput.value = '';
+            customerCombinedInfoInput.value = ''; // Clear combined info
+            customerMobileInput.value = ''; // Clear mobile
+            customerBriefInput.value = ''; // Clear brief
             updateCartDisplay();
 
         } catch (error) {
@@ -486,21 +485,11 @@ document.addEventListener('DOMContentLoaded', () => {
             pdf.text(`Order Code: ${orderData.orderCode}`, leftMargin, y);
             y += (30 * lineHeightFactor);
 
-            // Customer Information (Dynamic)
+            // Customer Information (Only Mobile Number as per latest request)
             pdf.setFontSize(12);
-            pdf.text('Customer Name: ' + orderData.customerName, leftMargin, y);
-            y += (15 * lineHeightFactor);
-            pdf.text('Mobile No: ' + orderData.customerMobile, leftMargin, y);
-            y += (15 * lineHeightFactor);
-            if (orderData.customerTitle && orderData.customerTitle.trim() !== '') {
-                pdf.text('Title: ' + orderData.customerTitle, leftMargin, y);
-                y += (15 * lineHeightFactor);
-            }
-            if (orderData.customerOrganization && orderData.customerOrganization.trim() !== '') {
-                pdf.text('Organization: ' + orderData.customerOrganization, leftMargin, y);
-                y += (15 * lineHeightFactor);
-            }
+            pdf.text('Customer Mobile No: ' + orderData.customerMobile, leftMargin, y); // Only mobile number
             y += (20 * lineHeightFactor); // Extra space before items table
+
 
             // Table Header
             pdf.setFontSize(12);
@@ -583,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Important Note for Files
             pdf.setFontSize(10);
-            pdf.text('Important: Please share your design files via WhatsApp to +8801951912031 using your Order Code.', pdf.internal.pageSize.width / 2, y, { align: 'center' });
+            pdf.text('Important: Please share your design files via WhatsApp to +8801753903854 using your Order Code.', pdf.internal.pageSize.width / 2, y, { align: 'center' }); // Corrected WhatsApp Number for PDF
             y += (20 * lineHeightFactor);
 
             // Thank You Message
