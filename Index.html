@@ -16,7 +16,7 @@
     <header class="main-header">
         <div class="container">
             <div class="logo-placeholder">
-                <!-- Placeholder for Fotolipi Logo - will be styled with CSS/font -->
+                <!-- Fotolipi Text Logo -->
                 <h1 class="company-name">ফটোলিপি</h1>
             </div>
             <p class="slogan">আপনার সৃষ্টিশীলতার প্রতিচ্ছবি, আমাদের হাতে!</p>
@@ -143,37 +143,31 @@
         </div>
     </div>
 
-    <!-- Order Details & File Upload Popup -->
+    <!-- Order Details & File Upload Popup (UPDATED) -->
     <div id="order-details-popup" class="popup-overlay" style="display: none;">
         <div class="popup-content">
             <button class="close-popup-btn" id="close-order-details-popup">&times;</button>
             <h3 class="popup-heading"><i class="fas fa-clipboard-list"></i> অর্ডারের বিবরণ</h3>
             <form id="file-upload-form">
                 <div class="form-group">
-                    <label for="customer-design-file">প্রয়োজনীয় ফাইল আপলোড করুন:</label>
+                    <label for="customer-combined-info">এই ডিজাইনটির জন্য প্রয়োজনিয় তথ্য দিন:</label>
+                    <textarea id="customer-combined-info" name="customerCombinedInfo" rows="3" placeholder="যেমনঃ নাম, পদবী, সংগঠনের নাম।" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="customer-mobile">মোবাইল নং:</label>
+                    <input type="tel" id="customer-mobile" name="customerMobile" placeholder="আপনার মোবাইল নম্বর লিখুন (যেমন: ০১৭XXXXXXXX)" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer-brief">সংক্ষিপ্ত বিবরনি:</label>
+                    <textarea id="customer-brief" name="customerBrief" rows="4" placeholder="আপনার ডিজাইন সম্পর্কে সংক্ষিপ্ত বিবরণ লিখুন (যেমন: থিম, রং, টেক্সট)" required></textarea>
+                </div>
+                 <p class="file-upload-instruction">প্রয়োজনিয় ছবিগুলো অর্ডার প্রকৃয়া শেষ হলে WhatsApp অপসোেন দেখাবে , সেখানে send করতে হবে ।</p>
+                <div class="form-group">
+                    <label for="customer-design-file">প্রয়োজনীয় ফাইল আপলোড করুন (ফাইল নাম রেকর্ড হবে):</label>
                     <input type="file" id="customer-design-file" name="designFile" accept="image/*, .pdf, .doc, .docx" multiple>
                     <p class="text-sm text-gray-500 mt-1">ছবি, PDF, Word ফাইল আপলোড করতে পারবেন। একাধিক ফাইল আপলোড করা যাবে।</p>
                 </div>
-                <div class="form-group">
-                    <label for="customer-name">আপনার নাম:</label>
-                    <input type="text" id="customer-name" name="customerName" placeholder="আপনার পুরো নাম লিখুন" required>
-                </div>
-                <div class="form-group">
-                    <label for="customer-mobile">মোবাইল নম্বর:</label>
-                    <input type="tel" id="customer-mobile" name="customerMobile" placeholder="আপনার মোবাইল নম্বর লিখুন (যেমন: ০১৭XXXXXXXX)" required>
-                </div>
-                 <div class="form-group">
-                    <label for="customer-title">পদবী (ঐচ্ছিক):</label>
-                    <input type="text" id="customer-title" name="customerTitle" placeholder="আপনার পদবী লিখুন (যেমন: ম্যানেজার, শিক্ষক)">
-                </div>
-                 <div class="form-group">
-                    <label for="customer-organization">সংগঠন (ঐচ্ছিক):</label>
-                    <input type="text" id="customer-organization" name="customerOrganization" placeholder="আপনার প্রতিষ্ঠানের নাম লিখুন">
-                </div>
-                <div class="form-group">
-                    <label for="customer-brief">সংক্ষিপ্ত বিবরণ:</label>
-                    <textarea id="customer-brief" name="customerBrief" rows="4" placeholder="আপনার ডিজাইন সম্পর্কে সংক্ষিপ্ত বিবরণ লিখুন (যেমন: থিম, রং, টেক্সট)" required></textarea>
-                </div>
+               
                 <button type="submit" class="btn primary-btn" id="add-to-cart-btn"><i class="fas fa-cart-plus"></i> কার্টে যুক্ত করুন</button>
             </form>
         </div>
@@ -197,7 +191,8 @@
             </div>
 
             <h4 class="payment-heading">বিল পরিশোধের তথ্য (বিকাশ)</h4>
-            <p class="payment-instructions">আপনার মোট বিল <span id="bKash-total">০</span> টাকা এই বিকাশ নম্বরে <span class="bKash-number">+8801951912031</span> সেন্ট মানি করুন।</p>
+            <!-- UPDATED bKash Number -->
+            <p class="payment-instructions">আপনার মোট বিল <span id="bKash-total">০</span> টাকা এই বিকাশ নম্বরে <span class="bKash-number">01753903854</span> সেন্ট মানি করুন।</p>
             <form id="payment-form">
                 <div class="form-group">
                     <label for="bKash-txn-id">বিকাশ Transaction ID:</label>
@@ -220,7 +215,8 @@
             <p class="success-message">আপনার অর্ডার সফলভাবে জমা হয়েছে।</p>
             <p class="success-message">খুব শীঘ্রই আমাদের প্রতিনিধি আপনার সাথে যোগাযোগ করবে এবং আপনার আপলোড করা ফাইলগুলো WhatsApp-এর মাধ্যমে পাঠাতে অনুরোধ করবে।</p>
             <button class="btn secondary-btn" id="download-pdf-btn"><i class="fas fa-file-pdf"></i> চালান ডাউনলোড করুন</button>
-            <a href="https://wa.me/8801951912031?text=প্রিয় ফটোলিপি টিম, আমার অর্ডার কোড: {{ORDER_CODE}}। আমি আমার ডিজাইনের ফাইলগুলো শেয়ার করতে চাই।" target="_blank" class="btn whatsapp-btn mt-3" id="whatsapp-file-share-btn"><i class="fab fa-whatsapp"></i> WhatsApp এ ফাইল পাঠান</a>
+            <!-- UPDATED WhatsApp Number -->
+            <a href="https://wa.me/8801753903854?text=প্রিয় ফটোলিপি টিম, আমার অর্ডার কোড: {{ORDER_CODE}}। আমি আমার ডিজাইনের ফাইলগুলো শেয়ার করতে চাই।" target="_blank" class="btn whatsapp-btn mt-3" id="whatsapp-file-share-btn"><i class="fab fa-whatsapp"></i> WhatsApp এ ফাইল পাঠান</a>
             <p class="thank-you-message mt-4">ফটোলিপির সাথে থাকার জন্য ধন্যবাদ!</p>
             <button class="btn primary-btn mt-3" id="close-success-popup-btn-bottom">ঠিক আছে</button>
         </div>
